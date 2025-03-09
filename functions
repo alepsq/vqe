@@ -1,0 +1,41 @@
+import pennylane as qml
+from pennylane import numpy as np
+from pennylane import qchem
+import matplotlib.pyplot as plt
+
+def hydrogen_hamiltonian(coordinates):
+    molecule = qchem.Molecule(["H", "H"], coordinates)
+    return qchem.molecular_hamiltonian(molecule)[0]
+
+def hf(num_qubits):
+    return qchem.hf_state(2, num_qubits)
+
+
+def non_zero_state_amplitudes(state):
+    # Creiamo una lista che conterrà le coppie (indice, valore)
+    non_zero_amplitudes = []
+    
+    # Iteriamo sugli indici e valori dell'array
+    for amplitude in state:
+        if amplitude != 0:
+            non_zero_amplitudes.append((amplitude))
+    
+    return non_zero_amplitudes
+
+def plot(r, energy):
+    plt.figure(figsize=(8, 6))  # Imposta la dimensione della figura
+    plt.plot(r, energy, linestyle='-', marker='o', color="royalblue", markersize=6, label="H2 ground state energy")
+    
+    plt.xlabel("r (Å)", fontsize=12)
+    plt.ylabel("E (Ha)", fontsize=12)
+    plt.title("H₂ Ground State Energy vs Bond Distance", fontsize=14, fontweight='bold')
+
+    plt.axvline(x=r[energy.index(min(energy))], color='red', linestyle='--', label="Min Energy")  # Linea verticale al minimo
+    plt.axhline(y=min(energy), color='green', linestyle='--', alpha=0.7)  # Linea orizzontale al minimo
+
+    plt.grid(True, linestyle='--', alpha=0.6)  # Aggiunge una griglia
+    plt.legend(fontsize=12)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
+    
+    plt.show()
